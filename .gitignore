@@ -5,6 +5,8 @@
 # Eclipse settings ignore
 .metadata/
 .settings/
+# Debug output files
+*Test*.txt
 
 ## CODIFLY Custom Project Ignores UP
 

@@ -25,6 +25,8 @@ public:
 
 private:
 	const FConvolutionParams::FNetwork& Params;
+
+public: // access to Blocks for debug purposes
 	TArray<FBlock> Blocks;
 };
 
