@@ -33,9 +33,6 @@
     <ClCompile Include="Sources\SquareProject\AI\Base.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Convo\ConvolutedParams.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Core\Threading\ThreadingUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,12 +55,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\JsonIO\Service\JsonWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\NeuNet\BaseNetwork.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\SquareProject\Executables\RotVsNoRot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\SquareProject\Game\GameSetup.cpp">
@@ -125,12 +116,6 @@
     <ClInclude Include="Sources\SquareProject\AI\Base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Convo\ConvolutedParams.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Convo\StdH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Core\Threading\ThreadInclude.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -174,15 +159,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\JsonIO\StdH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\NeuNet\BaseNetwork.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\NeuNet\StdH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\SquareProject\Executables\RotVsNoRot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\SquareProject\Game\GameSetup.h">

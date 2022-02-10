@@ -1,7 +1,6 @@
 #include <SquareProject/StdH.h>
 
 #include <SquareProject/AI/Heuristics/ExponentialFalloff.h>
-#include <SquareProject/Executables/RotVsNoRot.h>
 #include <SquareProject/Executables/RVNR_C2.h>
 #include <SquareProject/Game/GameSetup.h>
 #include <SquareProject/MapGen/AlternateRing.h>
@@ -11,10 +10,6 @@
 #include <Convolutional/Params/Block.h>
 #include <Convolutional/Params/Connection.h>
 #include <Convolutional/Params/Network.h>
-
-#include <Convo/ConvolutedParams.h>
-
-#include <NeuNet/BaseNetwork.h>
 
 #include <Core/MathTools.h>
 
