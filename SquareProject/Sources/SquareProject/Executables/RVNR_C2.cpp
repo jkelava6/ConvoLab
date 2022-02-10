@@ -42,19 +42,19 @@ public:
 	bool bProvideDifferentialFeedback = false;
 };
 
-float GetTargetStep(int32 Iteration, int32 NumOfIterations, float SlowdownStartRatio = 0.1f, float SlowdownEndRatio = 0.8f)
+float GetTargetStep(int32 Iteration, int32 NumOfIterations, float SlowdownStartRatio = 0.1f, float SlowdownEndRatio = 0.5f)
 {
-	constexpr float MaxStep = 3e-2f;
+	constexpr float MaxStep = 5e-3f;
 	constexpr float MinStep = 1e-4f;
 	const int32 SDSI = (int32)(SlowdownStartRatio * NumOfIterations);
 	const int32 SDEI = (int32)(SlowdownEndRatio * NumOfIterations);
 	return FMath::LerpF(MaxStep, MinStep, FMath::ClampF((Iteration - SDSI) / (float)(SDEI - SDSI), 0, 1));
 }
 
-float GetTargetScale(int32 Iteration, int32 NumOfIterations, float SlowdownStartRatio = 0.2f, float SlowdownEndRatio = 0.8f)
+float GetTargetScale(int32 Iteration, int32 NumOfIterations, float SlowdownStartRatio = 0.2f, float SlowdownEndRatio = 0.6f)
 {
 	constexpr float MaxStep = -1.0f;
-	constexpr float MinStep = -1e-4f;
+	constexpr float MinStep = -1e-3f;
 	const int32 SDSI = (int32)(SlowdownStartRatio * NumOfIterations);
 	const int32 SDEI = (int32)(SlowdownEndRatio * NumOfIterations);
 	return FMath::LerpF(MaxStep, MinStep, FMath::ClampF((Iteration - SDSI) / (float)(SDEI - SDSI), 0, 1));
@@ -66,7 +66,7 @@ static void TrainNetwork(FConvolutionInstance::FNetwork& Network, TArray<FDataPo
 	const int32 NumOfInputs = FirstDataPoint.Inputs.Count();
 	const int32 NumOfOutputs = FirstDataPoint.Outputs.Count();
 
-	constexpr int32 NumOfIterations = 100;
+	constexpr int32 NumOfIterations = 1000;
 	const int32 NumOfReports = NumOfIterations;
 	int32 LastReport = -1;
 	float NextStep = GetTargetStep(0, NumOfIterations);

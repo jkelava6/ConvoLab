@@ -3,7 +3,7 @@
 
 CONVOLUTION_FUNCTION_NAMESPACE_BEGIN
 
-extern float MaxBiasValue = 1.0f;
+extern float MaxBiasValue = 0.0f;
 extern float MaxWeightValue = 2.0f;
 extern float MaxInitialBias = 1.0f;
 extern float MaxInitialWeight = 0.5f;
