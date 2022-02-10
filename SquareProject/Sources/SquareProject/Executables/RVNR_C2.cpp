@@ -290,34 +290,7 @@ static void GenerateVisualizationData(FConvolutionInstance::FNetwork& Network, T
 		File.open(Destination + FileName, std::ios_base::out);
 
 		const int32 NumOfBlocks = Network.Blocks.Count();
-		File << NumOfBlocks + 1 << "\n";
-		
-		File << MapSize << " " << MapSize << " " << 7 << "\n";
-
-		for (int32 Feature = 0; Feature < 6; ++Feature)
-		{
-			for (int32 X = 0; X < MapSize; ++X)
-			{
-				for (int32 Y = 0; Y < MapSize; ++Y)
-				{
-					File << DP.Inputs[Feature * MapSize * MapSize + X * MapSize + Y] << " ";
-				}
-				File << "\n";
-			}
-			File << "\n";
-		}
-		for (int32 Feature = 0; Feature < 1; ++Feature)
-		{
-			for (int32 X = 0; X < MapSize; ++X)
-			{
-				for (int32 Y = 0; Y < MapSize; ++Y)
-				{
-					File << DP.Outputs[Feature * MapSize * MapSize + X * MapSize + Y] << " ";
-				}
-				File << "\n";
-			}
-			File << "\n";
-		}
+		File << NumOfBlocks << "\n";
 
 		for (int32 BlockIndex = 0; BlockIndex < NumOfBlocks; ++BlockIndex)
 		{
