@@ -14,6 +14,7 @@ public class FMatrixWrapper extends GuiGroup
 	
 	GuiText MaxValueLabel = null;
 	GuiText MinValueLabel = null;
+	GuiText DisplayedRangeLabel = null;
 	
 	float MinValue = -1.0f;
 	float MaxValue = 1.0f;
@@ -37,6 +38,9 @@ public class FMatrixWrapper extends GuiGroup
 		MinValueLabel = new GuiText(this, new GuiFrame(0.85f, 0.6f, 0.95f, 0.65f));
 		MinValueLabel.SetAlignment(HorizontalAlign.CENTER, VerticalAlign.CENTER);
 		AddElement(MinValueLabel);
+		DisplayedRangeLabel = new GuiText(this, new GuiFrame(0.85f, 0.7f, 0.95f, 0.75f));
+		DisplayedRangeLabel.SetAlignment(HorizontalAlign.CENTER, VerticalAlign.CENTER);
+		AddElement(DisplayedRangeLabel);
 	}
 	
 	public void SetMatrix(float[][] InMatrix)
@@ -57,8 +61,10 @@ public class FMatrixWrapper extends GuiGroup
 	{
 		super.TakeTick(DeltaTime);
 		
-		Matrix.SetRange(MinValue + SliderLight.GetSliderValue() * (MaxValue - MinValue),
-				MinValue + SliderDark.GetSliderValue() * (MaxValue - MinValue));
+		final float LowValue = MinValue + SliderLight.GetSliderValue() * (MaxValue - MinValue);
+		final float HighValue = MinValue + SliderDark.GetSliderValue() * (MaxValue - MinValue);
+		Matrix.SetRange(LowValue, HighValue);
+		DisplayedRangeLabel.SetText(String.format("%.2f <-> %.2f", LowValue, HighValue));
 	}
 
 }
