@@ -65,7 +65,7 @@ public class FNetworkDisplayUnit extends GuiGroup {
 		// call initial setups
 		BlockSelection.Resize(NumOfBlocks);
 		FeatureSelection.Resize(NumOfFeatures[0]);
-		Display.SetMatrix(States[0][0]);
+		UpdateMatrix();
 	}
 	
 	public void Select(GuiElement Panel, int Index)
