@@ -60,6 +60,39 @@ float GetTargetScale(int32 Iteration, int32 NumOfIterations, float SlowdownStart
 	return FMath::LerpF(MaxStep, MinStep, FMath::ClampF((Iteration - SDSI) / (float)(SDEI - SDSI), 0, 1));
 }
 
+static TArray<FDataPoint>* NEC_DataSet = nullptr;
+
+static float CalculateNetworkError(FConvolutionInstance::FNetwork& Network)
+{
+	TArray<FDataPoint>& DataSet = *NEC_DataSet;
+	const FDataPoint& FirstDataPoint = DataSet[0];
+	const int32 NumOfInputs = FirstDataPoint.Inputs.Count();
+	const int32 NumOfOutputs = FirstDataPoint.Outputs.Count();
+	TArray<float> NetworkOutputs;
+	for (int32 Output = 0; Output < NumOfOutputs; ++Output)
+	{
+		NetworkOutputs.Push();
+	}
+
+	double ErrorSquaredSum = 0.0;
+	for (int32 DataPointIndex = 0; DataPointIndex < DataSet.Count(); ++DataPointIndex)
+	{
+		const FDataPoint& Data = DataSet[DataPointIndex];
+		if (!Data.bProvideDifferentialFeedback)
+		{
+			continue;
+		}
+		Network.Evaluate(Data.Inputs, NetworkOutputs);
+		for (int32 Output = 0; Output < NumOfOutputs; ++Output)
+		{
+			const float Error = NetworkOutputs[Output] - Data.Outputs[Output];
+			ErrorSquaredSum += FMath::SquareF(Error);
+		}
+	}
+
+	return (float)ErrorSquaredSum;
+}
+
 static void TrainNetwork(FConvolutionInstance::FNetwork& Network, TArray<FDataPoint>& DataSet)
 {
 	const FDataPoint& FirstDataPoint = DataSet[0];
@@ -97,7 +130,6 @@ static void TrainNetwork(FConvolutionInstance::FNetwork& Network, TArray<FDataPo
 			for (int32 Output = 0; Output < NumOfOutputs; ++Output)
 			{
 				const float Error = NetworkOutputs[Output] - Data.Outputs[Output];
-				//std::cout << Error << " ";
 				Gradient[Output] = Error; // should this be plus or minus?
 
 				ErrorSum += FMath::AbsF(Error);
@@ -107,11 +139,13 @@ static void TrainNetwork(FConvolutionInstance::FNetwork& Network, TArray<FDataPo
 			{
 				Network.Backpropagate(Gradient);
 			}
-			//std::cout << "\n";
 		}
 
 		const float ThisStep = NextStep;
-		Network.ApplyBackProp(GetTargetScale(Iteration, NumOfIterations), ThisStep);
+		//Network.ApplyBackProp(GetTargetScale(Iteration, NumOfIterations), ThisStep);
+		NEC_DataSet = &DataSet;
+		Network.ExponentialBackProp(-1e-3f, 1e-6f, CalculateNetworkError);
+		NEC_DataSet = &DataSet;
 		if (FMath::AbsF((float)(ErrorSum - LastErrorSum)) < 1e-3f && FMath::AbsF((float)(ErrorSquaredSum - LastSquaredSum)) < 1e-3f)
 		{
 			NextStep *= 6.0f;

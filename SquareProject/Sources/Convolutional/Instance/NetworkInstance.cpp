@@ -277,6 +277,7 @@ void FNetwork::ExponentialBackProp(float InitialScale, float InitialMaxStep, Fun
 			{
 				Blocks[BI].RevertStates();
 			}
+			break;
 		}
 		Error = NewError;
 
