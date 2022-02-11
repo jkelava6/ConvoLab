@@ -118,6 +118,7 @@ void FConnection::ApplyBackProp(float Scale, float MaxStep)
 			{
 				const int32 Index = (Feature * (SizeX * SizeY) + X * (SizeY)+Y);
 				Weights[Index] += FMath::ClampF(Scale * SavedDifferentials[Index], -MaxStep, MaxStep);
+				Weights[Index] = FMath::ClampF(Weights[Index], -FConvolutionFunction::MaxBiasValue, FConvolutionFunction::MaxBiasValue);
 			}
 		}
 	}
