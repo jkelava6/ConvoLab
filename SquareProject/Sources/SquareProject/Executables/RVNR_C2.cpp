@@ -42,24 +42,6 @@ public:
 	bool bProvideDifferentialFeedback = false;
 };
 
-float GetTargetStep(int32 Iteration, int32 NumOfIterations, float SlowdownStartRatio = 0.1f, float SlowdownEndRatio = 0.5f)
-{
-	constexpr float MaxStep = 5e-3f;
-	constexpr float MinStep = 1e-4f;
-	const int32 SDSI = (int32)(SlowdownStartRatio * NumOfIterations);
-	const int32 SDEI = (int32)(SlowdownEndRatio * NumOfIterations);
-	return FMath::LerpF(MaxStep, MinStep, FMath::ClampF((Iteration - SDSI) / (float)(SDEI - SDSI), 0, 1));
-}
-
-float GetTargetScale(int32 Iteration, int32 NumOfIterations, float SlowdownStartRatio = 0.2f, float SlowdownEndRatio = 0.6f)
-{
-	constexpr float MaxStep = -1.0f;
-	constexpr float MinStep = -1e-3f;
-	const int32 SDSI = (int32)(SlowdownStartRatio * NumOfIterations);
-	const int32 SDEI = (int32)(SlowdownEndRatio * NumOfIterations);
-	return FMath::LerpF(MaxStep, MinStep, FMath::ClampF((Iteration - SDSI) / (float)(SDEI - SDSI), 0, 1));
-}
-
 static TArray<FDataPoint>* NEC_DataSet = nullptr;
 
 static float CalculateNetworkError(FConvolutionInstance::FNetwork& Network)
@@ -99,10 +81,9 @@ static void TrainNetwork(FConvolutionInstance::FNetwork& Network, TArray<FDataPo
 	const int32 NumOfInputs = FirstDataPoint.Inputs.Count();
 	const int32 NumOfOutputs = FirstDataPoint.Outputs.Count();
 
-	constexpr int32 NumOfIterations = 1000;
+	constexpr int32 NumOfIterations = 2000;
 	const int32 NumOfReports = NumOfIterations;
 	int32 LastReport = -1;
-	float NextStep = GetTargetStep(0, NumOfIterations);
 	double LastErrorSum = 0.0;
 	double LastSquaredSum = 0.0;
 	for (int32 Iteration = 0; Iteration < NumOfIterations; ++Iteration)
@@ -141,28 +122,16 @@ static void TrainNetwork(FConvolutionInstance::FNetwork& Network, TArray<FDataPo
 			}
 		}
 
-		const float ThisStep = NextStep;
-		//Network.ApplyBackProp(GetTargetScale(Iteration, NumOfIterations), ThisStep);
 		NEC_DataSet = &DataSet;
 		Network.ExponentialBackProp(-1e-3f, 1e-6f, CalculateNetworkError);
 		NEC_DataSet = &DataSet;
-		if (FMath::AbsF((float)(ErrorSum - LastErrorSum)) < 1e-3f && FMath::AbsF((float)(ErrorSquaredSum - LastSquaredSum)) < 1e-3f)
-		{
-			NextStep *= 6.0f;
-			NextStep = FMath::Min(0.1f, NextStep);
-		}
-		else
-		{
-			NextStep = GetTargetStep(Iteration, NumOfIterations);
-		}
-		//std::cout << "\n\n\n";
 
 		const int32 ReportIndex = (Iteration * NumOfReports) / NumOfIterations;
 		if (ReportIndex > LastReport)
 		{
 			std::cout << "Iteration " << Iteration << " (" << ((100 * Iteration) / NumOfIterations)
 				<< "%) Error Sum: " << ErrorSum << " Squared Error Sum: " << ErrorSquaredSum
-				<< "\nStep Size: " << ThisStep << " Error Sum Diff: " << ErrorSum - LastErrorSum << " Square Sum Diff: " << ErrorSquaredSum - LastSquaredSum << "\n";
+				<< "\nError Sum Diff: " << ErrorSum - LastErrorSum << " Square Sum Diff: " << ErrorSquaredSum - LastSquaredSum << "\n";
 			LastReport = ReportIndex;
 		}
 
@@ -218,18 +187,6 @@ int32 EvalTestGame(FGame& GameObject, int32 WithRotationPlayer, const FGameSetup
 	int32 Turn;
 	for (Turn = 0; Turn < MaxTurns; ++Turn)
 	{
-		//const int32 MapSize = GameObject.GetMapSize();
-		//for (int32 X = 0; X < MapSize; ++X)
-		//{
-		//	for (int32 Y = 0; Y < MapSize; ++Y)
-		//	{
-		//		const FSquare& Square = GameObject.GetSquare(X, Y);
-		//		std::cout << (Square.SquareOwnership == 0 ? Square.UnitCount : -Square.UnitCount) << ' ';
-		//	}
-		//	std::cout << '\n';
-		//}
-		//std::cout << '\n';
-
 		int32 NumOfPlayersAlive = 0;
 		for (int32 Player = 0; Player < 4; ++Player)
 		{
@@ -258,7 +215,14 @@ int32 EvalTestGame(FGame& GameObject, int32 WithRotationPlayer, const FGameSetup
 						Outputs.Push();
 					}
 
-					WithNetwork.Evaluate(Inputs, Outputs);
+					if (Player == WithRotationPlayer)
+					{
+						WithNetwork.Evaluate(Inputs, Outputs);
+					}
+					else
+					{
+						WithoutNetwork.Evaluate(Inputs, Outputs);
+					}
 					Move = AI.ChooseMove(GameObject, Outputs);
 				}
 				else
@@ -428,8 +392,8 @@ extern void WithVsWithoutRotation2(const FConvolutionParams::FNetwork& Params, I
 					FPlayedMove Move = AI.ChooseMove(GameObject, Without.Outputs);
 					GameObject.Play(Move.X, Move.Y, false);
 
-					With.bProvideDifferentialFeedback = !(Turn % 6);
-					Without.bProvideDifferentialFeedback = !(Turn % 6);
+					With.bProvideDifferentialFeedback = !(Turn % 4);
+					Without.bProvideDifferentialFeedback = !(Turn % 4);
 				}
 				else
 				{
@@ -459,17 +423,26 @@ extern void WithVsWithoutRotation2(const FConvolutionParams::FNetwork& Params, I
 	{
 		const FGameSetup& TestSetup = Test[TestGameIndex];
 
+		int32 GS_WW = 0;
+		int32 GS_WOW = 0;
+
 		FMath::SetRandomSeed(TestSetup.Seed);
 		GameObject.SetupGame(*TestSetup.MapGen);
 		int32 Winner = EvalTestGame(GameObject, 0, TestSetup, WithNetwork, WithoutNetwork, OutputCount, AI);
 		WithWins += (Winner == 0);
 		WithoutWins += (Winner == 2);
+		GS_WW += (Winner == 0);
+		GS_WOW += (Winner == 2);
 
 		FMath::SetRandomSeed(TestSetup.Seed);
 		GameObject.SetupGame(*TestSetup.MapGen);
 		Winner = EvalTestGame(GameObject, 2, TestSetup, WithNetwork, WithoutNetwork, OutputCount, AI);
-		WithWins += (Winner == 0);
-		WithoutWins += (Winner == 2);
+		WithWins += (Winner == 2);
+		WithoutWins += (Winner == 0);
+		GS_WW += (Winner == 2);
+		GS_WOW += (Winner == 0);
+
+		std::cout << "Game setup #" << TestGameIndex + 1 << ": " << GS_WW << " - " << GS_WOW << "\n";
 	}
 
 	std::cout << "With rotation wins: " << WithWins << "\n";

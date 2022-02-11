@@ -154,7 +154,7 @@ int main()
 	}
 
 	TArray<FGameSetup> TestSet;
-	for (int32 Game = 0; Game < 1; ++Game)
+	for (int32 Game = 0; Game < 20; ++Game)
 	{
 		TestSet.Add(FGameSetup(&RingGen, 1000 + Game));
 	}
