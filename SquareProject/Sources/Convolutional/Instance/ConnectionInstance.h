@@ -30,6 +30,8 @@ public:
 	FBlock* GetBlock() const;
 	void SaveDifferentials();
 	void ApplyBackProp(float Scale, float MaxStep);
+	void RevertWeights();
+	void ClearSavedDifferentials();
 private:
 	const FConvolutionParams::FConnection& Params;
 	int32 SizeFeatures;
@@ -37,6 +39,7 @@ private:
 	int32 SizeY;
 	int32 SizeDestFeat;
 	TArray<float> Weights;
+	TArray<float> SavedWeights;
 	TArray<float> Differentials;
 	TArray<float> SavedDifferentials;
 	FBlock* Block;

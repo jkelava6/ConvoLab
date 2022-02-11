@@ -39,6 +39,8 @@ public:
 	FConnection& GetConnection(int32 ConnIndex);
 	void SaveDifferentials();
 	void ApplyBackProp(float Scale, float MaxStep);
+	void RevertStates();
+	void ClearSavedDifferentials();
 private:
 	const FConvolutionParams::FBlock& Params;
 
@@ -46,6 +48,7 @@ private:
 	int32 SizeX;
 	int32 SizeY;
 	TArray<float> Biases;
+	TArray<float> SavedBiases;
 	TArray<FConvolutionFunction::ICollector*> Collectors;
 	TArray<float> States;
 	TArray<float> Differentials;

@@ -196,7 +196,6 @@ void FNetwork::Backpropagate(const TArray<float>& ErrorDifferentials)
 				for (int32 Y = 0; Y < SizeY; ++Y)
 				{
 					float Differential = Block.GetDifferential(Feature, X, Y);
-					//std::cout << Differential << " ";
 					Differential *= Block.GetParams().Mapper->DerivateAt(Block.GetState(Feature, X, Y));
 					Differential *= Block.GetParams().Collector->Derivate(Block.GetState(Feature, X, Y));
 
@@ -237,7 +236,6 @@ void FNetwork::Backpropagate(const TArray<float>& ErrorDifferentials)
 			}
 		}
 	}
-	//std::cout << "\n\n";
 
 	for (int32 BlockIndex = 0; BlockIndex < NumOfBlocks; ++BlockIndex)
 	{
@@ -246,12 +244,52 @@ void FNetwork::Backpropagate(const TArray<float>& ErrorDifferentials)
 	}
 }
 
-void FNetwork::ApplyBackProp(float Scale, float MaxStep)
+void FNetwork::ApplyBackProp(float Scale, float MaxStep, bool bClearDifferentials/* = true*/)
 {
 	for (int32 BlockIndex = 0; BlockIndex < Blocks.Count(); ++BlockIndex)
 	{
 		FBlock& Block = Blocks[BlockIndex];
 		Block.ApplyBackProp(Scale, MaxStep);
+	}
+
+	if (bClearDifferentials)
+	{
+		for (int32 BI = 0; BI < Blocks.Count(); ++BI)
+		{
+			Blocks[BI].ClearSavedDifferentials();
+		}
+	}
+}
+
+void FNetwork::ExponentialBackProp(float InitialScale, float InitialMaxStep, FunctionPointer(float, ErrorFunction, FNetwork&), bool bClearDifferentials/* = true*/)
+{
+	float Scale = InitialScale;
+	float MaxStep = InitialMaxStep;
+	float Error;
+	for (int32 Iteration = 0; Iteration < 64; ++Iteration)
+	{
+		ApplyBackProp(Scale, MaxStep, false);
+
+		const float NewError = ErrorFunction(*this);
+		if (Iteration > 1 && NewError > Error)
+		{
+			for (int32 BI = 0; BI < Blocks.Count(); ++BI)
+			{
+				Blocks[BI].RevertStates();
+			}
+		}
+		Error = NewError;
+
+		Scale *= 2.0f;
+		MaxStep *= 2.0f;
+	}
+
+	if (bClearDifferentials)
+	{
+		for (int32 BI = 0; BI < Blocks.Count(); ++BI)
+		{
+			Blocks[BI].ClearSavedDifferentials();
+		}
 	}
 }
 

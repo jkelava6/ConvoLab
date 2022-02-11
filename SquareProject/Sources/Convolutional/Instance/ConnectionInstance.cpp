@@ -27,6 +27,7 @@ FConnection::FConnection(const FConvolutionParams::FConnection* InParams, FBlock
 	for (int32 WI = 0; WI < NumOfWeights; ++WI)
 	{
 		Weights.Add(Dna ? Dna->ReadFloat() : FConvolutionFunction::GetInitialWeightValue());
+		SavedWeights.Add(Weights[WI]);
 		Differentials.Add(0.0f);
 		SavedDifferentials.Add(0.0f);
 	}
@@ -104,6 +105,11 @@ void FConnection::SaveDifferentials()
 
 void FConnection::ApplyBackProp(float Scale, float MaxStep)
 {
+	for (int32 Index = 0; Index < Weights.Count(); ++Index)
+	{
+		SavedWeights[Index] = Weights[Index];
+	}
+
 	for (int32 Feature = 0; Feature < SizeFeatures; ++Feature)
 	{
 		for (int32 X = 0; X < SizeX; ++X)
@@ -111,11 +117,25 @@ void FConnection::ApplyBackProp(float Scale, float MaxStep)
 			for (int32 Y = 0; Y < SizeY; ++Y)
 			{
 				const int32 Index = (Feature * (SizeX * SizeY) + X * (SizeY)+Y);
-				//std::cout << SavedDifferentials[Index] << " ";
 				Weights[Index] += FMath::ClampF(Scale * SavedDifferentials[Index], -MaxStep, MaxStep);
-				SavedDifferentials[Index] = 0.0f;
 			}
 		}
+	}
+}
+
+void FConnection::RevertWeights()
+{
+	for (int32 Index = 0; Index < Weights.Count(); ++Index)
+	{
+		Weights[Index] = SavedWeights[Index];
+	}
+}
+
+void FConnection::ClearSavedDifferentials()
+{
+	for (int32 Index = 0; Index < SavedDifferentials.Count(); ++Index)
+	{
+		SavedDifferentials[Index] = 0;
 	}
 }
 

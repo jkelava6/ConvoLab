@@ -32,6 +32,7 @@ FBlock::FBlock(const FConvolutionParams::FBlock* InParams, FDna* InDna/* = nullp
 	for (int32 Bias = 0; Bias < NumOfBiases; ++Bias)
 	{
 		Biases.Add(InDna ? InDna->ReadFloat() : FConvolutionFunction::GetInitialBiasValue());
+		SavedBiases.Add(Biases[Bias]);
 	}
 }
 
@@ -135,6 +136,11 @@ void FBlock::SaveDifferentials()
 
 void FBlock::ApplyBackProp(float Scale, float MaxStep)
 {
+	for (int32 Index = 0; Index < Biases.Count(); ++Index)
+	{
+		SavedBiases[Index] = Biases[Index];
+	}
+
 	for (int32 Feature = 0; Feature < NumOfFeatures; ++Feature)
 	{
 		float FeatureDifferential = 0.0f;
@@ -152,14 +158,6 @@ void FBlock::ApplyBackProp(float Scale, float MaxStep)
 				{
 					FeatureDifferential += SavedDifferentials[Index];
 				}
-				SavedDifferentials[Index] = 0.0f;
-				//std::cout << SavedDifferentials[Index] << " ";
-
-				const int32 NumOfConnections = GetNumOfConnections();
-				for (int32 ConnIndex = 0; ConnIndex < NumOfConnections; ++ConnIndex)
-				{
-					Connections[ConnIndex].ApplyBackProp(Scale, MaxStep);
-				}
 			}
 		}
 
@@ -168,7 +166,38 @@ void FBlock::ApplyBackProp(float Scale, float MaxStep)
 			SetBias(Feature, 0, 0, GetBias(Feature, 0, 0) + FMath::ClampF(Scale * FeatureDifferential, -MaxStep, MaxStep));
 		}
 	}
-	//std::cout << "\n\n\n\n\n";
+
+	const int32 NumOfConnections = GetNumOfConnections();
+	for (int32 ConnIndex = 0; ConnIndex < NumOfConnections; ++ConnIndex)
+	{
+		Connections[ConnIndex].ApplyBackProp(Scale, MaxStep);
+	}
+}
+
+void FBlock::RevertStates()
+{
+	for (int32 Index = 0; Index < Biases.Count(); ++Index)
+	{
+		Biases[Index] = SavedBiases[Index];
+	}
+
+	for (int32 Index = 0; Index < Connections.Count(); ++Index)
+	{
+		Connections[Index].RevertWeights();
+	}
+}
+
+void FBlock::ClearSavedDifferentials()
+{
+	for (int32 Index = 0; Index < SavedDifferentials.Count(); ++Index)
+	{
+		SavedDifferentials[Index] = 0;
+	}
+
+	for (int32 Index = 0; Index < Connections.Count(); ++Index)
+	{
+		Connections[Index].ClearSavedDifferentials();
+	}
 }
 
 CONVOLUTION_INSTANCE_NAMESPACE_END
