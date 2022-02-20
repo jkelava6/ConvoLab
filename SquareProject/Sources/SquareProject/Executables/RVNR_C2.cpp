@@ -5,6 +5,8 @@
 #include <SquareProject/Game/GameCore.h>
 #include <SquareProject/Game/GameSetup.h>
 #include <SquareProject/Game/MapGenerator.h>
+#include <SquareProject/Tools/DataPoint.h>
+#include <SquareProject/Tools/TrainingTask.h>
 
 #include <Convolutional/Instance/NetworkInstance.h>
 #include <Convolutional/Instance/BlockInstance.h>
@@ -12,132 +14,10 @@
 #include <fstream>
 #include <iostream>
 
-class FDataPoint
-{
-public:
-	FDataPoint() = default;
-	FDataPoint& operator=(const FDataPoint& Copied)
-	{
-		Inputs = Copied.Inputs;
-		Outputs = Copied.Inputs;
-		return *this;
-	}
-	FDataPoint(const FDataPoint& Copied)
-	{
-		*this = Copied;
-	}
-	FDataPoint& operator=(FDataPoint&& Copied) noexcept
-	{
-		Inputs = Move(Copied.Inputs);
-		Outputs = Move(Copied.Outputs);
-		return *this;
-	}
-	FDataPoint(FDataPoint&& Copied) noexcept
-	{
-		*this = Move(Copied);
-	}
-public:
-	TArray<float> Inputs;
-	TArray<float> Outputs;
-	bool bProvideDifferentialFeedback = false;
-};
-
-static TArray<FDataPoint>* NEC_DataSet = nullptr;
-
-static float CalculateNetworkError(FConvolutionInstance::FNetwork& Network)
-{
-	TArray<FDataPoint>& DataSet = *NEC_DataSet;
-	const FDataPoint& FirstDataPoint = DataSet[0];
-	const int32 NumOfInputs = FirstDataPoint.Inputs.Count();
-	const int32 NumOfOutputs = FirstDataPoint.Outputs.Count();
-	TArray<float> NetworkOutputs;
-	for (int32 Output = 0; Output < NumOfOutputs; ++Output)
-	{
-		NetworkOutputs.Push();
-	}
-
-	double ErrorSquaredSum = 0.0;
-	for (int32 DataPointIndex = 0; DataPointIndex < DataSet.Count(); ++DataPointIndex)
-	{
-		const FDataPoint& Data = DataSet[DataPointIndex];
-		if (!Data.bProvideDifferentialFeedback)
-		{
-			continue;
-		}
-		Network.Evaluate(Data.Inputs, NetworkOutputs);
-		for (int32 Output = 0; Output < NumOfOutputs; ++Output)
-		{
-			const float Error = NetworkOutputs[Output] - Data.Outputs[Output];
-			ErrorSquaredSum += FMath::SquareF(Error);
-		}
-	}
-
-	return (float)ErrorSquaredSum;
-}
-
 static void TrainNetwork(FConvolutionInstance::FNetwork& Network, TArray<FDataPoint>& DataSet)
 {
-	const FDataPoint& FirstDataPoint = DataSet[0];
-	const int32 NumOfInputs = FirstDataPoint.Inputs.Count();
-	const int32 NumOfOutputs = FirstDataPoint.Outputs.Count();
-
-	constexpr int32 NumOfIterations = 2000;
-	const int32 NumOfReports = NumOfIterations;
-	int32 LastReport = -1;
-	double LastErrorSum = 0.0;
-	double LastSquaredSum = 0.0;
-	for (int32 Iteration = 0; Iteration < NumOfIterations; ++Iteration)
-	{
-		TArray<float> Gradient;
-		TArray<float> NetworkOutputs;
-		for (int32 Output = 0; Output < NumOfOutputs; ++Output)
-		{
-			Gradient.Add(0.0f);
-			NetworkOutputs.Push();
-		}
-
-		double ErrorSum = 0.0;
-		double ErrorSquaredSum = 0.0;
-		for (int32 DataPointIndex = 0; DataPointIndex < DataSet.Count(); ++DataPointIndex)
-		{
-			const FDataPoint& Data = DataSet[DataPointIndex];
-#if true
-			if (!Data.bProvideDifferentialFeedback)
-			{
-				continue;
-			}
-#endif
-			Network.Evaluate(Data.Inputs, NetworkOutputs);
-			for (int32 Output = 0; Output < NumOfOutputs; ++Output)
-			{
-				const float Error = NetworkOutputs[Output] - Data.Outputs[Output];
-				Gradient[Output] = Error; // should this be plus or minus?
-
-				ErrorSum += FMath::AbsF(Error);
-				ErrorSquaredSum += FMath::SquareF(Error);
-			}
-			if (Data.bProvideDifferentialFeedback)
-			{
-				Network.Backpropagate(Gradient);
-			}
-		}
-
-		NEC_DataSet = &DataSet;
-		Network.ExponentialBackProp(-1e-3f, 1e-6f, CalculateNetworkError);
-		NEC_DataSet = &DataSet;
-
-		const int32 ReportIndex = (Iteration * NumOfReports) / NumOfIterations;
-		if (ReportIndex > LastReport)
-		{
-			std::cout << "Iteration " << Iteration << " (" << ((100 * Iteration) / NumOfIterations)
-				<< "%) Error Sum: " << ErrorSum << " Squared Error Sum: " << ErrorSquaredSum
-				<< "\nError Sum Diff: " << ErrorSum - LastErrorSum << " Square Sum Diff: " << ErrorSquaredSum - LastSquaredSum << "\n";
-			LastReport = ReportIndex;
-		}
-
-		LastErrorSum = ErrorSum;
-		LastSquaredSum = ErrorSquaredSum;
-	}
+	FTrainingTask Training = FTrainingTask(2000, 1e-6f, -1e-6f, true);
+	Training.Train(Network, DataSet);
 }
 
 static void GenerateInputs(const FGame& GameObject, TArray<float>& OutInputs, bool bRotateFromPlayersView)

@@ -22,7 +22,8 @@ public:
 	void Evaluate(const TArray<float>& Inputs, TArray<float>& Outputs);
 	void Backpropagate(const TArray<float>& ErrorDifferentials);
 	void ApplyBackProp(float Scale, float MaxStep, bool bClearDifferentials = true);
-	void ExponentialBackProp(float InitialScale, float InitialMaxStep, FunctionPointer(float, ErrorFunction, FNetwork&), bool bClearDifferentials = true);
+	void ExponentialBackProp(float InitialScale, float InitialMaxStep, FunctionPointer(float, ErrorFunction, void* TestContextObject),
+		bool bClearDifferentials = true, void* ContextObject = nullptr);
 
 private:
 	const FConvolutionParams::FNetwork& Params;

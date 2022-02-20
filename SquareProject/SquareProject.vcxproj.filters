@@ -96,6 +96,12 @@
     <ClCompile Include="Sources\Convolutional\Function\ParamBounds.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\SquareProject\Tools\DataPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\SquareProject\Tools\TrainingTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\SquareProject\Game\GameCore.h">
@@ -198,6 +204,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Convolutional\Function\ParamBounds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SquareProject\Tools\DataPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SquareProject\Tools\TrainingTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

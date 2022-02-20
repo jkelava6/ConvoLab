@@ -170,6 +170,8 @@
     <ClCompile Include="Sources\SquareProject\Executables\RVNR_C2.cpp" />
     <ClCompile Include="Sources\SquareProject\MapGen\AlternateRing.cpp" />
     <ClCompile Include="Sources\SquareProject\SquareProject.cpp" />
+    <ClCompile Include="Sources\SquareProject\Tools\DataPoint.cpp" />
+    <ClCompile Include="Sources\SquareProject\Tools\TrainingTask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Convolutional\Function\Collector.h" />
@@ -206,6 +208,8 @@
     <ClInclude Include="Sources\SquareProject\Executables\RVNR_C2.h" />
     <ClInclude Include="Sources\SquareProject\MapGen\AlternateRing.h" />
     <ClInclude Include="Sources\SquareProject\StdH.h" />
+    <ClInclude Include="Sources\SquareProject\Tools\DataPoint.h" />
+    <ClInclude Include="Sources\SquareProject\Tools\TrainingTask.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

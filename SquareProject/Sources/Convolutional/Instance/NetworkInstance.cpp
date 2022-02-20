@@ -261,7 +261,8 @@ void FNetwork::ApplyBackProp(float Scale, float MaxStep, bool bClearDifferential
 	}
 }
 
-void FNetwork::ExponentialBackProp(float InitialScale, float InitialMaxStep, FunctionPointer(float, ErrorFunction, FNetwork&), bool bClearDifferentials/* = true*/)
+void FNetwork::ExponentialBackProp(float InitialScale, float InitialMaxStep, FunctionPointer(float, ErrorFunction, void* TestContextObject),
+	bool bClearDifferentials/* = true*/, void* ContextObject/* = nullptr*/)
 {
 	float Scale = InitialScale;
 	float MaxStep = InitialMaxStep;
@@ -270,7 +271,7 @@ void FNetwork::ExponentialBackProp(float InitialScale, float InitialMaxStep, Fun
 	{
 		ApplyBackProp(Scale, MaxStep, false);
 
-		const float NewError = ErrorFunction(*this);
+		const float NewError = ErrorFunction(ContextObject);
 		if (Iteration > 1 && NewError > Error)
 		{
 			for (int32 BI = 0; BI < Blocks.Count(); ++BI)
