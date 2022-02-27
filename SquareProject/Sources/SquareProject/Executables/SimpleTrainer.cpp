@@ -54,6 +54,7 @@ extern void SimpleTraining()
 
 	FDna TrainedDna;
 	Network->Serialize(TrainedDna);
+	TrainedDna.Seek(0);
 	FDnaLoader::WriteDnaFile(OutputDnaFileName, TrainedDna);
 
 	delete DataSet;

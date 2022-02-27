@@ -302,12 +302,14 @@ void FNetwork::Serialize(FDna& Dna)
 	for (int32 BI = 0; BI < Blocks.Count(); ++BI)
 	{
 		const FBlock& Block = Blocks[BI];
-		const int32 NumOfBiasFeatures = (Params.Blocks[BI]->bUseDifferentBiases ? Block.GetNumOfFeatures() : 1);
-		for (int32 Feature = 0; Feature < NumOfBiasFeatures; ++Feature)
+		const bool bDifferentBiases = Params.Blocks[BI]->bUseDifferentBiases;
+		const int32 BSX = bDifferentBiases ? Block.GetSizeX() : 1;
+		const int32 BSY = bDifferentBiases ? Block.GetSizeY() : 1;
+		for (int32 Feature = 0; Feature < Block.GetNumOfFeatures(); ++Feature)
 		{
-			for (int32 X = 0; X < Block.GetSizeX(); ++X)
+			for (int32 X = 0; X < BSX; ++X)
 			{
-				for (int32 Y = 0; Y < Block.GetSizeY(); ++Y)
+				for (int32 Y = 0; Y < BSY; ++Y)
 				{
 					Dna.PushFloat(Block.GetBias(Feature, X, Y));
 				}
@@ -317,12 +319,12 @@ void FNetwork::Serialize(FDna& Dna)
 	for (int32 BI = 0; BI < Blocks.Count(); ++BI)
 	{
 		FBlock& Block = Blocks[BI];
-		const int32 NumOfBiasFeatures = (Params.Blocks[BI]->bUseDifferentBiases ? Block.GetNumOfFeatures() : 1);
 		for (int32 CI = 0; CI < Block.GetNumOfConnections(); ++CI)
 		{
 			const FConnection& Connection = Block.GetConnection(CI);
+			Connection.GetNumOfFeatures();
 
-			for (int32 OutFeature = 0; OutFeature < NumOfBiasFeatures; ++OutFeature)
+			for (int32 OutFeature = 0; OutFeature < Block.GetNumOfFeatures(); ++OutFeature)
 			{
 				for (int32 InFeature = 0; InFeature < Connection.GetNumOfFeatures(); ++InFeature)
 				{

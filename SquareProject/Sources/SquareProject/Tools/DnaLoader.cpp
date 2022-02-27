@@ -25,6 +25,7 @@ FDna* FDnaLoader::ReadDnaFile(const std::string& FileName)
 	}
 
 	File.close();
+	Dna->Seek(0);
 	return Dna;
 }
 

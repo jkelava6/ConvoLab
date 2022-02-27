@@ -6,6 +6,7 @@
 int main()
 {
 	ExecuteRVNR();
+	//SimpleTraining();
 
 	return 0;
 }

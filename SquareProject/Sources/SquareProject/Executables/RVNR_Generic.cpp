@@ -299,9 +299,11 @@ extern void WithVsWithoutRotation2(const FConvolutionParams::FNetwork& Params, I
 #if ONLY_GENERATE_INITIAL_TRAINING_PARAMETERS
 	FDna WithInitialDna;
 	WithNetwork.Serialize(WithInitialDna);
+	WithInitialDna.Seek(0);
 	FDnaLoader::WriteDnaFile("DataFiles/WithRotDna_0.txt", WithInitialDna);
 	FDna WithoutInitialDna;
 	WithoutNetwork.Serialize(WithoutInitialDna);
+	WithoutInitialDna.Seek(0);
 	FDnaLoader::WriteDnaFile("DataFiles/WithoutRotDna_0.txt", WithoutInitialDna);
 	FParamsLoader::WriteParamsFile("DataFiles/WVsWoRotNetParams.txt", Params);
 	FDataSetLoader::WriteDataSetFile("DataFiles/WithRotDataset.txt", WithDataset);

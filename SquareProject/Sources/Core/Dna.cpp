@@ -37,14 +37,14 @@ void FDna::PushInt(int32 Pushed)
 
 float FDna::ReadFloat()
 {
-	void* Read = Pointer == Genes.Count() ? &Genes.Push() : &Genes[Pointer];
+	void* Read = &Genes[Pointer];
 	++Pointer;
 	return *(float*)Read;
 }
 
 int32 FDna::ReadInt()
 {
-	void* Read = Pointer == Genes.Count() ? &Genes.Push() : &Genes[Pointer];
+	void* Read = &Genes[Pointer];
 	++Pointer;
 	return *(int32*)Read;
 }
