@@ -8,7 +8,7 @@
 IJsonObject* FJsonReader::ReadJsonObject()
 {
 	IJsonInputStream* InputStream = FJsonInternal::CreateInputStream();
-	IJsonObject* Object = ReadJsonMap(InputStream);
+	IJsonObject* Object = ReadJsonObject(InputStream);
 	delete InputStream;
 	return Object;
 }
@@ -16,7 +16,7 @@ IJsonObject* FJsonReader::ReadJsonObject()
 IJsonObject* FJsonReader::ReadJsonObject(const std::string& JsonString)
 {
 	IJsonInputStream* InputStream = FJsonInternal::CreateInputStream(JsonString);
-	IJsonObject* Object = ReadJsonMap(InputStream);
+	IJsonObject* Object = ReadJsonObject(InputStream);
 	delete InputStream;
 	return Object;
 }
@@ -54,7 +54,7 @@ FJsonMap* FJsonReader::ReadJsonMap(IJsonInputStream* Input)
 		}
 
 		std::string Name = ReadString(Input);
-		AssertChar(Input, '=');
+		AssertChar(Input, ':');
 		IJsonObject* Object = ReadJsonObject();
 		Map->Data[Name] = Object;
 

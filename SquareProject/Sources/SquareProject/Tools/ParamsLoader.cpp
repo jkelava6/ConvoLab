@@ -94,8 +94,15 @@ FConvolutionParams::FNetwork* FParamsLoader::ReadParamsFile(const std::string& F
 		int32 NumOfFeatures;
 		int32 CollectorCode;
 		int32 MapperCode;
-		File >> SizeX >> SizeY >> NumOfFeatures >> CollectorCode >> MapperCode;
-		FConvolutionParams::FBlock Block(SizeX, SizeY, NumOfFeatures, LoadCollector(CollectorCode), LoadMapper(MapperCode));
+		bool bIsInput;
+		bool bIsOutput;
+		File >> SizeX >> SizeY >> NumOfFeatures >> bIsInput >> bIsOutput >> CollectorCode >> MapperCode;
+		FConvolutionParams::FBlock* Block = new FConvolutionParams::FBlock(
+			SizeX, SizeY, NumOfFeatures, LoadCollector(CollectorCode), LoadMapper(MapperCode));
+		Block->bIsInput = bIsInput;
+		Block->bIsOutput = bIsOutput;
+		Params->AddBlock(Block);
+
 		int32 NumOfConnections;
 		File >> NumOfConnections;
 		for (int32 ConnectionIndex = 0; ConnectionIndex < NumOfConnections; ++ConnectionIndex)
@@ -110,7 +117,7 @@ FConvolutionParams::FNetwork* FParamsLoader::ReadParamsFile(const std::string& F
 			bool bAllFeatures;
 			File >> BlockIndex >> ScaleX >> LoX >> HiX >> ScaleY >> LoY >> HiY >> bAllFeatures;
 			// TODO: This does not support recurrent networks.
-			Block.Connections.Emplace(Params->Blocks[BlockIndex], ScaleX, LoX, HiX, ScaleY, LoY, HiY, bAllFeatures);
+			Block->Connections.Emplace(Params->Blocks[BlockIndex], ScaleX, LoX, HiX, ScaleY, LoY, HiY, bAllFeatures);
 		}
 	}
 
@@ -128,7 +135,9 @@ void FParamsLoader::WriteParamsFile(const std::string& FileName, const FConvolut
 	for (int32 BlockIndex = 0; BlockIndex < NumOfBlocks; ++BlockIndex)
 	{
 		FConvolutionParams::FBlock* Block = Network.Blocks[BlockIndex];
-		File << Block->X << " " << Block->Y << " " << Block->Features << " " << SaveCollector(Block->Collector) << " " << SaveMapper(Block->Mapper) << "\n";
+		File << Block->X << " " << Block->Y << " " << Block->Features << " "
+			<< Block->bIsInput << " " << Block->bIsOutput << " "
+			<< SaveCollector(Block->Collector) << " " << SaveMapper(Block->Mapper) << "\n";
 		
 		const int32 NumOfConnections = Block->Connections.Count();
 		File << NumOfConnections << "\n";
