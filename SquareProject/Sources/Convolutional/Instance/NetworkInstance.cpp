@@ -9,6 +9,8 @@
 #include <Convolutional/Params/Connection.h>
 #include <Convolutional/Params/Network.h>
 
+#include <Core/Dna.h>
+
 #include <iostream>
 
 CONVOLUTION_INSTANCE_NAMESPACE_BEGIN
@@ -291,6 +293,48 @@ void FNetwork::ExponentialBackProp(float InitialScale, float InitialMaxStep, Fun
 		for (int32 BI = 0; BI < Blocks.Count(); ++BI)
 		{
 			Blocks[BI].ClearSavedDifferentials();
+		}
+	}
+}
+
+void FNetwork::Serialize(FDna& Dna)
+{
+	for (int32 BI = 0; BI < Blocks.Count(); ++BI)
+	{
+		const FBlock& Block = Blocks[BI];
+		const int32 NumOfBiasFeatures = (Params.Blocks[BI]->bUseDifferentBiases ? Block.GetNumOfFeatures() : 1);
+		for (int32 Feature = 0; Feature < NumOfBiasFeatures; ++Feature)
+		{
+			for (int32 X = 0; X < Block.GetSizeX(); ++X)
+			{
+				for (int32 Y = 0; Y < Block.GetSizeY(); ++Y)
+				{
+					Dna.PushFloat(Block.GetBias(Feature, X, Y));
+				}
+			}
+		}
+	}
+	for (int32 BI = 0; BI < Blocks.Count(); ++BI)
+	{
+		FBlock& Block = Blocks[BI];
+		const int32 NumOfBiasFeatures = (Params.Blocks[BI]->bUseDifferentBiases ? Block.GetNumOfFeatures() : 1);
+		for (int32 CI = 0; CI < Block.GetNumOfConnections(); ++CI)
+		{
+			const FConnection& Connection = Block.GetConnection(CI);
+
+			for (int32 OutFeature = 0; OutFeature < NumOfBiasFeatures; ++OutFeature)
+			{
+				for (int32 InFeature = 0; InFeature < Connection.GetNumOfFeatures(); ++InFeature)
+				{
+					for (int32 X = 0; X < Connection.GetSizeX(); ++X)
+					{
+						for (int32 Y = 0; Y < Connection.GetSizeY(); ++Y)
+						{
+							Dna.PushFloat(Connection.GetWeight(InFeature, X, Y, OutFeature));
+						}
+					}
+				}
+			}
 		}
 	}
 }

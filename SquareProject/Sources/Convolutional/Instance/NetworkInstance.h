@@ -24,6 +24,7 @@ public:
 	void ApplyBackProp(float Scale, float MaxStep, bool bClearDifferentials = true);
 	void ExponentialBackProp(float InitialScale, float InitialMaxStep, FunctionPointer(float, ErrorFunction, void* TestContextObject),
 		bool bClearDifferentials = true, void* ContextObject = nullptr);
+	void Serialize(FDna& Dna);
 
 private:
 	const FConvolutionParams::FNetwork& Params;

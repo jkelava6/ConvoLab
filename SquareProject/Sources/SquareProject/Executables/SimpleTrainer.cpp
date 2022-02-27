@@ -7,6 +7,8 @@
 #include <SquareProject/Tools/ParamsLoader.h>
 #include <SquareProject/Tools/TrainingTask.h>
 
+#include <Convolutional/Instance/BlockInstance.h>
+#include <Convolutional/Instance/ConnectionInstance.h>
 #include <Convolutional/Instance/NetworkInstance.h>
 #include <Convolutional/Params/Network.h>
 
@@ -50,8 +52,9 @@ extern void SimpleTraining()
 		Training.Train(*Network, *DataSet);
 	}
 
-	// TODO: Deserialize network into DNA
-	// TODO: Write DNA
+	FDna TrainedDna;
+	Network->Serialize(TrainedDna);
+	FDnaLoader::WriteDnaFile(OutputDnaFileName, TrainedDna);
 
 	delete DataSet;
 	if (ConstructionDna)
