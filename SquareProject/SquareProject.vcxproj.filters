@@ -84,7 +84,7 @@
     <ClCompile Include="Sources\Convolutional\Params\Network.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\SquareProject\Executables\RVNR_C2.cpp">
+    <ClCompile Include="Sources\SquareProject\Executables\RVNR_Generic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Convolutional\Function\InitialValues.cpp">
@@ -112,6 +112,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\SquareProject\Tools\ParamsLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\SquareProject\Executables\RVNR_Construction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -209,7 +212,7 @@
     <ClInclude Include="Sources\Convolutional\Params\Network.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\SquareProject\Executables\RVNR_C2.h">
+    <ClInclude Include="Sources\SquareProject\Executables\RVNR_Generic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Convolutional\Function\InitialValues.h">
@@ -234,6 +237,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\SquareProject\Tools\ParamsLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SquareProject\Executables\RVNR_Construction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

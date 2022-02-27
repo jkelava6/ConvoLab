@@ -1,5 +1,5 @@
 #include <SquareProject/StdH.h>
-#include <SquareProject/Executables/RVNR_C2.h>
+#include <SquareProject/Executables/RVNR_Generic.h>
 
 #include <SquareProject/AI/Base.h>
 #include <SquareProject/Game/GameCore.h>
@@ -14,7 +14,7 @@
 #include <fstream>
 #include <iostream>
 
-#define ONLY_GENERATE_INITIAL_TRAINING_PARAMETERS true
+#define ONLY_GENERATE_INITIAL_TRAINING_PARAMETERS false
 #if ONLY_GENERATE_INITIAL_TRAINING_PARAMETERS
 #include <SquareProject/Tools/DataSetLoader.h>
 #include <SquareProject/Tools/ParamsLoader.h>
