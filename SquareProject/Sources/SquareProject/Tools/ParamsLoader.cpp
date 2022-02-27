@@ -92,7 +92,7 @@ FConvolutionParams::FNetwork* FParamsLoader::ReadParamsFile(const std::string& F
 			int32 HiX;
 			int32 HiY;
 			bool bAllFeatures;
-			File >> BlockIndex >> ScaleX >> LoX >> LoY >> ScaleY >> HiX >> HiY >> bAllFeatures;
+			File >> BlockIndex >> ScaleX >> LoX >> HiX >> ScaleY >> LoX >> HiY >> bAllFeatures;
 			// TODO: This does not support recurrent networks.
 			Block.Connections.Emplace(Params->Blocks[BlockIndex], ScaleX, LoX, HiX, ScaleY, LoY, HiY, bAllFeatures);
 		}
@@ -102,7 +102,30 @@ FConvolutionParams::FNetwork* FParamsLoader::ReadParamsFile(const std::string& F
 	return Params;
 }
 
-void FParamsLoader::WriteParamsFile(const std::string& FileName, FConvolutionParams::FNetwork& Dna)
+void FParamsLoader::WriteParamsFile(const std::string& FileName, FConvolutionParams::FNetwork& Network)
 {
+	std::ofstream File;
+	File.open(FileName, std::ios::out);
+	const int32 NumOfBlocks = Network.Blocks.Count();
+	File << NumOfBlocks << '\n';
 
+	for (int32 BlockIndex = 0; BlockIndex < NumOfBlocks; ++BlockIndex)
+	{
+		FConvolutionParams::FBlock* Block = Network.Blocks[BlockIndex];
+		File << Block->X << " " << Block->Y << " " << Block->Features << " " << SaveCollector(Block->Collector) << " " << SaveMapper(Block->Mapper) << "\n";
+		
+		const int32 NumOfConnections = Block->Connections.Count();
+		File << NumOfConnections << "\n";
+
+		for (int32 ConnectionIndex = 0; ConnectionIndex < NumOfConnections; ++ConnectionIndex)
+		{
+			FConvolutionParams::FConnection& Connection = Block->Connections[ConnectionIndex];
+			File << Network.Blocks.IndexOf(&Connection.Block) << " "
+				<< Connection.XFactor << " " << Connection.LoX << " " << Connection.HiX << " "
+				<< Connection.YFactor << " " << Connection.LoY << " " << Connection.HiY << " "
+				<< Connection.bAllFeatures << "\n";
+		}
+	}
+	
+	File.close();
 }

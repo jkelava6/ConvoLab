@@ -14,5 +14,5 @@ class FParamsLoader
 {
 public:
 	static FConvolutionParams::FNetwork* ReadParamsFile(const std::string& FileName);
-	static void WriteParamsFile(const std::string& FileName, FConvolutionParams::FNetwork& Dna);
+	static void WriteParamsFile(const std::string& FileName, FConvolutionParams::FNetwork& Network);
 };
