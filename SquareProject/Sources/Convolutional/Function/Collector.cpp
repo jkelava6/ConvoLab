@@ -3,6 +3,11 @@
 
 CONVOLUTION_FUNCTION_NAMESPACE_BEGIN
 
+bool ICollector::Equals(ICollector& Other)
+{
+	return GetUID() == Other.GetUID();
+}
+
 void FSum::Init()
 {
 	Sum = 0.0f;

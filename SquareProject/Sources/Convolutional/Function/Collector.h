@@ -10,6 +10,8 @@ public:
 	virtual void Init() = 0;
 	virtual void Collect(float X) = 0;
 	virtual float Finalize() = 0;
+	virtual int32 GetUID() = 0;
+	virtual bool Equals(ICollector& Other);
 
 	virtual ICollector* Clone() const = 0;
 	virtual float Derivate(float Input) const = 0;
@@ -23,6 +25,7 @@ public:
 	virtual void Init() override;
 	virtual void Collect(float X) override;
 	virtual float Finalize() override;
+	virtual int32 GetUID() override { return 0; };
 
 	virtual ICollector* Clone() const override;
 	virtual float Derivate(float Input) const override;
@@ -38,6 +41,7 @@ public:
 	virtual void Init() override;
 	virtual void Collect(float X) override;
 	virtual float Finalize() override;
+	virtual int32 GetUID() override { return 1; };
 
 	virtual ICollector* Clone() const override;
 	virtual float Derivate(float Input) const override;

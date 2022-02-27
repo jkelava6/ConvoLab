@@ -17,6 +17,11 @@ float IFloatToFloat::DerivateAt(float X)
 	return (EvaluateAt(X + Delta) - EvaluateAt(X)) / Delta;
 }
 
+bool IFloatToFloat::Equals(IFloatToFloat& Other)
+{
+	return GetUID() == Other.GetUID();
+}
+
 float FLinear::EvaluateAt(float X)
 {
 	return X;
@@ -42,9 +47,19 @@ float FLeakyReLu::EvaluateAt(float X)
 	return X > 0.0f ? X : Leak * X;
 }
 
-float  FLeakyReLu::DerivateAt(float X)
+float FLeakyReLu::DerivateAt(float X)
 {
 	return X > 0.0f ? 1.0f : Leak;
+}
+
+bool FLeakyReLu::Equals(IFloatToFloat& Other)
+{
+	if (GetUID() != Other.GetUID())
+	{
+		return false;
+	}
+	FLeakyReLu* OtherReLu = (FLeakyReLu*)&Other;
+	return Leak == OtherReLu->Leak;
 }
 
 float FTangens::EvaluateAt(float X)

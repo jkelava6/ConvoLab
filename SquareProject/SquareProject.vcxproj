@@ -163,6 +163,7 @@
     <ClCompile Include="Sources\JsonIO\Service\JsonReader.cpp" />
     <ClCompile Include="Sources\JsonIO\Service\JsonWriter.cpp" />
     <ClCompile Include="Sources\SquareProject\AI\Base.cpp" />
+    <ClCompile Include="Sources\SquareProject\Executables\SimpleTrainer.cpp" />
     <ClCompile Include="Sources\SquareProject\Game\GameCore.cpp" />
     <ClCompile Include="Sources\SquareProject\Game\GameSetup.cpp" />
     <ClCompile Include="Sources\SquareProject\Game\MapGenerator.cpp" />
@@ -171,6 +172,9 @@
     <ClCompile Include="Sources\SquareProject\MapGen\AlternateRing.cpp" />
     <ClCompile Include="Sources\SquareProject\SquareProject.cpp" />
     <ClCompile Include="Sources\SquareProject\Tools\DataPoint.cpp" />
+    <ClCompile Include="Sources\SquareProject\Tools\DataSetLoader.cpp" />
+    <ClCompile Include="Sources\SquareProject\Tools\DnaLoader.cpp" />
+    <ClCompile Include="Sources\SquareProject\Tools\ParamsLoader.cpp" />
     <ClCompile Include="Sources\SquareProject\Tools\TrainingTask.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +205,7 @@
     <ClInclude Include="Sources\JsonIO\Service\JsonWriter.h" />
     <ClInclude Include="Sources\JsonIO\StdH.h" />
     <ClInclude Include="Sources\SquareProject\AI\Base.h" />
+    <ClInclude Include="Sources\SquareProject\Executables\SimpleTrainer.h" />
     <ClInclude Include="Sources\SquareProject\Game\GameCore.h" />
     <ClInclude Include="Sources\SquareProject\Game\GameSetup.h" />
     <ClInclude Include="Sources\SquareProject\Game\MapGenerator.h" />
@@ -209,6 +214,9 @@
     <ClInclude Include="Sources\SquareProject\MapGen\AlternateRing.h" />
     <ClInclude Include="Sources\SquareProject\StdH.h" />
     <ClInclude Include="Sources\SquareProject\Tools\DataPoint.h" />
+    <ClInclude Include="Sources\SquareProject\Tools\DataSetLoader.h" />
+    <ClInclude Include="Sources\SquareProject\Tools\DnaLoader.h" />
+    <ClInclude Include="Sources\SquareProject\Tools\ParamsLoader.h" />
     <ClInclude Include="Sources\SquareProject\Tools\TrainingTask.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
