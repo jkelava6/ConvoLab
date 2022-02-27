@@ -14,5 +14,5 @@ class FParamsLoader
 {
 public:
 	static FConvolutionParams::FNetwork* ReadParamsFile(const std::string& FileName);
-	static void WriteParamsFile(const std::string& FileName, FConvolutionParams::FNetwork& Network);
+	static void WriteParamsFile(const std::string& FileName, const FConvolutionParams::FNetwork& Network);
 };

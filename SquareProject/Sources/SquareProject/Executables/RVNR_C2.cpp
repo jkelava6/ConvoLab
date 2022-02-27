@@ -14,6 +14,14 @@
 #include <fstream>
 #include <iostream>
 
+#define ONLY_GENERATE_INITIAL_TRAINING_PARAMETERS true
+#if ONLY_GENERATE_INITIAL_TRAINING_PARAMETERS
+#include <SquareProject/Tools/DataSetLoader.h>
+#include <SquareProject/Tools/ParamsLoader.h>
+#include <SquareProject/Tools/DnaLoader.h>
+#include <Core/Dna.h>
+#endif
+
 static void TrainNetwork(FConvolutionInstance::FNetwork& Network, TArray<FDataPoint>& DataSet)
 {
 	FTrainingTask Training = FTrainingTask(2000, 1e-6f, -1e-6f, true);
@@ -288,6 +296,18 @@ extern void WithVsWithoutRotation2(const FConvolutionParams::FNetwork& Params, I
 		std::cout << "Training board " << GameIndex << ", moves played : " << Turn << "\n";
 	}
 
+#if ONLY_GENERATE_INITIAL_TRAINING_PARAMETERS
+	FDna WithInitialDna;
+	WithNetwork.Serialize(WithInitialDna);
+	FDnaLoader::WriteDnaFile("DataFiles/WithRotDna_0.txt", WithInitialDna);
+	FDna WithoutInitialDna;
+	WithoutNetwork.Serialize(WithoutInitialDna);
+	FDnaLoader::WriteDnaFile("DataFiles/WithoutRotDna_0.txt", WithoutInitialDna);
+	FParamsLoader::WriteParamsFile("DataFiles/WVsWoRotNetParams.txt", Params);
+	FDataSetLoader::WriteDataSetFile("DataFiles/WithRotDataset.txt", WithDataset);
+	FDataSetLoader::WriteDataSetFile("DataFiles/WithoutRotDataset.txt", WithoutDataset);
+#else
+
 	// training
 	TrainNetwork(WithNetwork, WithDataset);
 	TrainNetwork(WithoutNetwork, WithoutDataset);
@@ -327,4 +347,5 @@ extern void WithVsWithoutRotation2(const FConvolutionParams::FNetwork& Params, I
 
 	std::cout << "With rotation wins: " << WithWins << "\n";
 	std::cout << "Without rotation wins: " << WithoutWins << "\n";
+#endif // ONLY_GENERATE_INITIAL_TRAINING_PARAMETERS
 }

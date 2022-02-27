@@ -29,6 +29,10 @@ static FConvolutionFunction::IFloatToFloat* SavableMappers[] =
 
 static int32 SaveCollector(FConvolutionFunction::ICollector* Collector)
 {
+	if (!Collector)
+	{
+		return -1;
+	}
 	for (int32 Index = 0; Index < ARRAY_SIZE(SavableCollectors); ++Index)
 	{
 		if (Collector->Equals(*SavableCollectors[Index]))
@@ -41,14 +45,22 @@ static int32 SaveCollector(FConvolutionFunction::ICollector* Collector)
 
 static FConvolutionFunction::ICollector* LoadCollector(int32 SavedIndex)
 {
+	if (SavedIndex == -1)
+	{
+		return nullptr;
+	}
 	return SavableCollectors[SavedIndex];
 }
 
-static int32 SaveMapper(FConvolutionFunction::IFloatToFloat* Collector)
+static int32 SaveMapper(FConvolutionFunction::IFloatToFloat* Mapper)
 {
+	if (!Mapper)
+	{
+		return -1;
+	}
 	for (int32 Index = 0; Index < ARRAY_SIZE(SavableMappers); ++Index)
 	{
-		if (Collector->Equals(*SavableMappers[Index]))
+		if (Mapper->Equals(*SavableMappers[Index]))
 		{
 			return Index;
 		}
@@ -58,6 +70,10 @@ static int32 SaveMapper(FConvolutionFunction::IFloatToFloat* Collector)
 
 static FConvolutionFunction::IFloatToFloat* LoadMapper(int32 SavedIndex)
 {
+	if (SavedIndex == -1)
+	{
+		return nullptr;
+	}
 	return SavableMappers[SavedIndex];
 }
 
@@ -92,7 +108,7 @@ FConvolutionParams::FNetwork* FParamsLoader::ReadParamsFile(const std::string& F
 			int32 HiX;
 			int32 HiY;
 			bool bAllFeatures;
-			File >> BlockIndex >> ScaleX >> LoX >> HiX >> ScaleY >> LoX >> HiY >> bAllFeatures;
+			File >> BlockIndex >> ScaleX >> LoX >> HiX >> ScaleY >> LoY >> HiY >> bAllFeatures;
 			// TODO: This does not support recurrent networks.
 			Block.Connections.Emplace(Params->Blocks[BlockIndex], ScaleX, LoX, HiX, ScaleY, LoY, HiY, bAllFeatures);
 		}
@@ -102,7 +118,7 @@ FConvolutionParams::FNetwork* FParamsLoader::ReadParamsFile(const std::string& F
 	return Params;
 }
 
-void FParamsLoader::WriteParamsFile(const std::string& FileName, FConvolutionParams::FNetwork& Network)
+void FParamsLoader::WriteParamsFile(const std::string& FileName, const FConvolutionParams::FNetwork& Network)
 {
 	std::ofstream File;
 	File.open(FileName, std::ios::out);
@@ -120,7 +136,7 @@ void FParamsLoader::WriteParamsFile(const std::string& FileName, FConvolutionPar
 		for (int32 ConnectionIndex = 0; ConnectionIndex < NumOfConnections; ++ConnectionIndex)
 		{
 			FConvolutionParams::FConnection& Connection = Block->Connections[ConnectionIndex];
-			File << Network.Blocks.IndexOf(&Connection.Block) << " "
+			File << Network.Blocks.FindValue(Connection.Block) << " "
 				<< Connection.XFactor << " " << Connection.LoX << " " << Connection.HiX << " "
 				<< Connection.YFactor << " " << Connection.LoY << " " << Connection.HiY << " "
 				<< Connection.bAllFeatures << "\n";

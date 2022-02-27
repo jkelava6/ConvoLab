@@ -199,13 +199,25 @@ public:
 		AllocatedSize = 0;
 	}
 
-	int32 IndexOf(Type* Pointer)
+	int32 IndexOf(Type* Pointer) const
 	{
 		const int32 Index = (int32)(Pointer - Data);
 #if _DEBUG
 		assert(0 <= Index && Index < UsedSize);
 #endif
 		return Index;
+	}
+
+	int32 FindValue(const Type& Value) const
+	{
+		for (int32 Index = 0; Index < UsedSize; ++Index)
+		{
+			if (Data[Index] == Value)
+			{
+				return Index;
+			}
+		}
+		return -1;
 	}
 
 	void LendData(Type* InData, int32 Size, bool bUsed = false)

@@ -7,6 +7,7 @@
 .settings/
 # Debug output files
 *Test*.txt
+DataFiles/
 
 ## CODIFLY Custom Project Ignores UP
 
