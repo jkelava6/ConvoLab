@@ -63,7 +63,7 @@ void FTrainingTask::Train(FConvolutionInstance::FNetwork& Network, TArray<FDataP
 				Network.Backpropagate(Gradient);
 				if (!bUseGroupTraining)
 				{
-					Network.ApplyBackProp(MaxStep, GradientScale);
+					Network.ApplyBackProp(GradientScale, MaxStep);
 				}
 			}
 		}
