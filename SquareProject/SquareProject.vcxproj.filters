@@ -117,6 +117,12 @@
     <ClCompile Include="Sources\SquareProject\Executables\RVNR_Construction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\SquareProject\Executables\VisualizationGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\SquareProject\Tools\GenerateVisualizationData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\SquareProject\Game\GameCore.h">
@@ -240,6 +246,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\SquareProject\Executables\RVNR_Construction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SquareProject\Executables\VisualizationGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SquareProject\Tools\GenerateVisualizationData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
