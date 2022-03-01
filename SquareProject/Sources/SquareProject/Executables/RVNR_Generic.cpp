@@ -315,8 +315,8 @@ extern void WithVsWithoutRotation2(const FConvolutionParams::FNetwork& Params, I
 	TrainNetwork(WithoutNetwork, WithoutDataset);
 
 	// generate visualizaiton data
-	GenerateVisualizationData(WithNetwork, WithDataset, "WithRot_");
-	GenerateVisualizationData(WithoutNetwork, WithoutDataset, "WithoutRot_");
+	GenerateVisualizationData(WithNetwork, WithDataset, "WithRot_NoGit_");
+	GenerateVisualizationData(WithoutNetwork, WithoutDataset, "WithoutRot_NoGit_");
 
 	// testing
 	int32 WithWins = 0;

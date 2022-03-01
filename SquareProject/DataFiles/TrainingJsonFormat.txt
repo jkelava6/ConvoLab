@@ -1,0 +1,17 @@
+{
+	"dataset_file": "DataFiles/WithoutRotDataset.txt",
+	"input_file": "DataFiles/WithoutRotDna_6.txt",
+	"output_file": "DataFiles/WithoutRotDna_7.txt",
+	"params_file": "DataFiles/WVsWoRotNetParams.txt",
+	"training_rounds":
+	{
+		"num_of_rounds": "1",
+		"0":
+		{
+			"iterations": "10000",
+			"max_step": "1e-6f",
+			"gradient_scale": "-1e-6f",
+			"group_training": "0"
+		}
+	}
+}

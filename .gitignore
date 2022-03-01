@@ -6,8 +6,7 @@
 .metadata/
 .settings/
 # Debug output files
-*Test*.txt
-DataFiles/
+*_NoGit_*
 
 ## CODIFLY Custom Project Ignores UP
 
