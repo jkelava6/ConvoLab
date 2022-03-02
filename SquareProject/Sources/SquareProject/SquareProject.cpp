@@ -6,9 +6,9 @@
 
 int main()
 {
-	ExecuteRVNR();
+	//ExecuteRVNR();
 	//SimpleTraining();
-	//GenerateVisualizationFilesProgram();
+	GenerateVisualizationFilesProgram();
 
 	return 0;
 }

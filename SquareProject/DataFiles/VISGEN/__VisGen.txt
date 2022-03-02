@@ -1,6 +1,6 @@
 {
 	"dataset_file": "DataFiles/WithoutRotDataset.txt",
 	"params_file": "DataFiles/WVsWoRotNetParams.txt",
-	"dna_file": "DataFiles/WithoutRotDna_7.txt",
+	"dna_file": "DataFiles/WithoutRotDna_16.txt",
 	"output_target": "DataFiles/VISGEN/_NoGit_"
 }
